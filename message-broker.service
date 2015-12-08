@@ -1,0 +1,24 @@
+[Unit]
+Description=Clustered message broker
+
+Requires=etcd.service
+Requires=docker.service
+
+After=etcd.service
+After=docker.service
+
+[Service]
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=0
+KillMode=none
+EnvironmentFile=/etc/environment
+
+ExecStartPre=-/usr/bin/docker kill message-broker
+ExecStartPre=-/usr/bin/docker rm message-broker
+ExecStart=/bin/bash -c '/usr/bin/docker run --name message-broker -p 4369:4369 -p 5671:5671 -p 5672:5672 -p 25672:25672 $(etcdctl get /announce/services/docker-registry/host)/message-broker:latest'
+ExecStop=/usr/bin/docker stop message-broker
+
+[X-Fleet]
+Global=true
+
