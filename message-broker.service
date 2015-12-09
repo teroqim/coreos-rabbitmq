@@ -1,10 +1,10 @@
 [Unit]
 Description=Clustered message broker
 
-Requires=etcd.service
+Requires=etcd2.service
 Requires=docker.service
 
-After=etcd.service
+After=etcd2.service
 After=docker.service
 
 [Service]
